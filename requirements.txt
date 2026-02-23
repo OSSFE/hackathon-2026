@@ -2,7 +2,7 @@
 openmc
 cadquery
 cad_to_dagmc
-git+https://github.com/jorgensd/adios4dolfinx
+io4dolfinx
 dagmc_h5m_file_inspector
 mpi4py
 numpy
