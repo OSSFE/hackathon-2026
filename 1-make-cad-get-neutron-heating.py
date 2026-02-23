@@ -2,6 +2,7 @@ import openmc
 from pathlib import Path
 from cad_to_dagmc import CadToDagmc
 import cadquery as cq
+
 # from cadquery.vis import show
 import dagmc_h5m_file_inspector as di
 
@@ -61,12 +62,10 @@ assembly.add(sphere, name="sphere")
 # my_tallies = openmc.Tallies([tally])
 
 
-
 # my_settings = openmc.Settings()
 # my_settings.batches = 10
 # my_settings.particles = 5000
 # my_settings.run_mode = "fixed source"
-
 
 
 # my_source = openmc.IndependentSource()
@@ -81,7 +80,6 @@ assembly.add(sphere, name="sphere")
 # sp_filename = model.run()
 
 
-
 # sp = openmc.StatePoint(sp_filename)
 
 # tally_result = sp.get_tally(name="unstructured_mesh_tally")
@@ -92,35 +90,4 @@ assembly.add(sphere, name="sphere")
 # umesh_from_sp = tally_result.find_filter(openmc.MeshFilter).mesh
 
 
-
 # umesh_from_sp.write_data_to_vtk(filename="tally.vtkhdf", datasets={"mean": flux_mean})
-
-
-
-
-from mpi4py import MPI
-
-import dolfinx
-import numpy as np
-
-import adios4dolfinx
-
-MPI.COMM_WORLD.barrier()
-
-domain = adios4dolfinx.read_mesh(
-    "tally.vtkhdf", MPI.COMM_WORLD, backend="pyvista", backend_args={"dtype": np.float64}
-)
-u = adios4dolfinx.read_cell_data(
-    "tally.vtkhdf",
-    "mean",
-    domain,
-    backend="pyvista",
-)
-
-
-names = adios4dolfinx.read_function_names("tally.vtkhdf", domain.comm, backend="vtkhdf")
-print(names)
-
-with dolfinx.io.XDMFFile(domain.comm, "test.xdmf", "w") as xdmf:
-    xdmf.write_mesh(domain)
-    xdmf.write_function(u)
