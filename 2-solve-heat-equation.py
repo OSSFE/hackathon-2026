@@ -40,6 +40,7 @@ from dolfinx.fem.petsc import (
     apply_lifting,
     set_bc,
 )
+from pathlib import Path
 
 t = 0.0  # Start time
 T = 10.0  # Final time
@@ -58,13 +59,18 @@ fdim = domain.topology.dim - 1
 boundary_facets = mesh.locate_entities_boundary(
     domain, fdim, lambda x: np.full(x.shape[1], True, dtype=bool)
 )
-bc = fem.dirichletbc(
-    PETSc.ScalarType(0), fem.locate_dofs_topological(V, fdim, boundary_facets), V
-)
+bc = fem.dirichletbc(PETSc.ScalarType(0), fem.locate_dofs_topological(V, fdim, boundary_facets), V)
 
 
 xdmf = io.XDMFFile(domain.comm, "diffusion.xdmf", "w")
 xdmf.write_mesh(domain)
+
+filename = Path("diffusion.vtkhdf")
+backend_args = {"name": "MyGrid"}
+
+io4dolfinx.write_mesh(
+    filename, domain, backend="vtkhdf", mode=io4dolfinx.FileMode.write, backend_args=backend_args
+)
 
 uh = fem.Function(V)
 uh.name = "uh"
@@ -86,7 +92,6 @@ solver = PETSc.KSP().create(domain.comm)
 solver.setOperators(A)
 solver.setType(PETSc.KSP.Type.PREONLY)
 solver.getPC().setType(PETSc.PC.Type.LU)
-
 
 for i in range(num_steps):
     t += dt
@@ -111,6 +116,15 @@ for i in range(num_steps):
 
     # Write solution to file
     xdmf.write_function(uh, t)
+
+    io4dolfinx.write_point_data(
+        filename,
+        uh,
+        time=t,
+        backend="vtkhdf",
+        mode=io4dolfinx.FileMode.append,
+        backend_args=backend_args,
+    )
 
 xdmf.close()
 
