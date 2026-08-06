@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="812" viewBox="0 0 920 812" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5f6368"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="920" height="812" fill="#ffffff"/>
+
+  <text x="30" y="38" font-size="20" font-weight="600" fill="#1a1a1a">OpenMC to FEniCS coupling</text>
+  <text x="30" y="60" font-size="13" fill="#5f6368">Neutron transport and thermal simulation, exchanging an unstructured mesh as VTKHDF</text>
+
+  <!-- script 1 lane -->
+  <rect x="24" y="84" width="620" height="380" rx="8" fill="#f7fafd" stroke="#c9d9ec" stroke-width="1"/>
+  <text x="40" y="106" font-size="12" font-weight="600" fill="#3d6f9e">1-make-cad-get-neutron-heating.py</text>
+
+  <!-- stage 1 -->
+  <rect x="48" y="118" width="440" height="64" rx="6" fill="#eef4fb" stroke="#4a7ebb" stroke-width="1.5"/>
+  <text x="66" y="142" font-size="14" font-weight="600" fill="#1a1a1a">CadQuery</text>
+  <text x="66" y="162" font-size="12" fill="#444444">Build the CAD assembly, a box with a sphere cut out of it</text>
+
+  <!-- stage 2 -->
+  <rect x="48" y="204" width="440" height="64" rx="6" fill="#eef4fb" stroke="#4a7ebb" stroke-width="1.5"/>
+  <text x="66" y="228" font-size="14" font-weight="600" fill="#1a1a1a">cad_to_dagmc</text>
+  <text x="66" y="248" font-size="12" fill="#444444">Mesh the CAD with gmsh and export a DAGMC geometry</text>
+  <rect x="664" y="212" width="232" height="48" rx="6" fill="#f5f5f5" stroke="#9aa0a6" stroke-width="1"/>
+  <text x="678" y="232" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#1a1a1a">dagmc.h5m</text>
+  <text x="678" y="250" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#1a1a1a">umesh.vtk</text>
+
+  <!-- stage 3 -->
+  <rect x="48" y="290" width="440" height="64" rx="6" fill="#eef4fb" stroke="#4a7ebb" stroke-width="1.5"/>
+  <text x="66" y="314" font-size="14" font-weight="600" fill="#1a1a1a">dagmc_h5m_file_inspector</text>
+  <text x="66" y="334" font-size="12" fill="#444444">Check the volumes and material tags in the h5m file</text>
+
+  <!-- stage 4 -->
+  <rect x="48" y="376" width="440" height="64" rx="6" fill="#eef4fb" stroke="#4a7ebb" stroke-width="1.5"/>
+  <text x="66" y="400" font-size="14" font-weight="600" fill="#1a1a1a">OpenMC</text>
+  <text x="66" y="420" font-size="12" fill="#444444">Transport 14 MeV neutrons, tally on the unstructured mesh</text>
+
+  <!-- handoff file -->
+  <rect x="664" y="384" width="232" height="66" rx="6" fill="#fff4e5" stroke="#d98a00" stroke-width="1.8"/>
+  <text x="678" y="405" font-size="12" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#7a4f00">tally.vtkhdf</text>
+  <text x="678" y="423" font-size="11" fill="#7a4f00">unstructured mesh, plus the</text>
+  <text x="678" y="439" font-size="11" fill="#7a4f00">tally result as cell data</text>
+
+  <!-- script 2 lane -->
+  <rect x="24" y="484" width="620" height="212" rx="8" fill="#f6fbf7" stroke="#c3e0cd" stroke-width="1"/>
+  <text x="40" y="506" font-size="12" font-weight="600" fill="#3d7e58">2-solve-heat-equation.py</text>
+
+  <!-- stage 5 -->
+  <rect x="48" y="518" width="440" height="64" rx="6" fill="#eef7f0" stroke="#4a9b6a" stroke-width="1.5"/>
+  <text x="66" y="542" font-size="14" font-weight="600" fill="#1a1a1a">DOLFINx and h5py</text>
+  <text x="66" y="562" font-size="12" fill="#444444">Read the mesh natively, read the cell data with h5py</text>
+
+  <!-- stage 6 -->
+  <rect x="48" y="604" width="440" height="64" rx="6" fill="#eef7f0" stroke="#4a9b6a" stroke-width="1.5"/>
+  <text x="66" y="628" font-size="14" font-weight="600" fill="#1a1a1a">DOLFINx</text>
+  <text x="66" y="648" font-size="12" fill="#444444">Solve the transient heat equation with the tally as the source</text>
+  <rect x="664" y="612" width="232" height="48" rx="6" fill="#f5f5f5" stroke="#9aa0a6" stroke-width="1"/>
+  <text x="678" y="632" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#1a1a1a">diffusion.xdmf</text>
+  <text x="678" y="650" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="#1a1a1a">diffusion.vtkhdf</text>
+
+  <!-- stage 7, optional -->
+  <rect x="48" y="716" width="440" height="56" rx="6" fill="#fafafa" stroke="#9aa0a6" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="66" y="740" font-size="14" font-weight="600" fill="#444444">ParaView</text>
+  <text x="66" y="759" font-size="12" fill="#5f6368">View the temperature field over time</text>
+
+  <!-- vertical arrows down the stages -->
+  <line x1="268" y1="182" x2="268" y2="200" stroke="#5f6368" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="268" y1="268" x2="268" y2="286" stroke="#5f6368" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="268" y1="354" x2="268" y2="372" stroke="#5f6368" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="268" y1="582" x2="268" y2="600" stroke="#5f6368" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="268" y1="668" x2="268" y2="712" stroke="#5f6368" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- file write arrows -->
+  <line x1="488" y1="236" x2="660" y2="236" stroke="#9aa0a6" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <line x1="488" y1="408" x2="660" y2="408" stroke="#d98a00" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="488" y1="636" x2="660" y2="636" stroke="#9aa0a6" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+  <!-- handoff arrow, tally.vtkhdf into script 2 -->
+  <path d="M 780 450 L 780 466 Q 780 474 772 474 L 438 474 Q 430 474 430 482 L 430 514"
+        fill="none" stroke="#d98a00" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="600" y="466" font-size="11" font-style="italic" fill="#7a4f00">the handoff</text>
+
+</svg>
