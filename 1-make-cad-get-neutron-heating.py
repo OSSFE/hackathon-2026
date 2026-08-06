@@ -27,10 +27,10 @@ assembly.add(sphere, name="sphere")
 
 # my_model.export_dagmc_h5m_file(
 #     filename="dagmc.h5m",
-#     set_size={"sphere": 0.5,"box": 15,},
-#     unstructured_volumes=["sphere"],
+#     meshing_backend="cad-to-dagmc-mesher",
+#     tet_volumes=["sphere"],
+#     target_edge_length=2.0,
 #     umesh_filename="umesh.vtk",
-#     meshing_backend="gmsh",
 # )
 
 # di.convert_h5m_to_vtkhdf('dagmc.h5m', 'dagmc.vtkhdf')
