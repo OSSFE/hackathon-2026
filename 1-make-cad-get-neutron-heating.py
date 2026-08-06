@@ -53,7 +53,7 @@ my_tallies = openmc.Tallies([tally])
 
 my_settings = openmc.Settings()
 my_settings.batches = 10
-my_settings.particles = 5000
+my_settings.particles = 25000
 my_settings.run_mode = "fixed source"
 
 my_source = openmc.IndependentSource()
