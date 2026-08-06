@@ -14,6 +14,12 @@ from cadquery.vis import show
 
 size = (1200, 1000)
 
+# one camera for the CAD and the mesh, so the two images face the same way. cadquery
+# applies its own roll on top of an explicit camera unless it is set to zero.
+camera_position = (35, -90, 50)
+camera_focus = (7.5, 0.0, 0.0)
+camera_up = (0.0, 0.0, 1.0)
+
 # ------------------------------------------------------------------ the CAD in 3D
 assembly = cq.Assembly()
 box = cq.Workplane("XY").box(30, 30, 30)
@@ -28,6 +34,10 @@ show(
     trihedron=False,
     gradient=False,
     bgcolor=(1.0, 1.0, 1.0),
+    position=camera_position,
+    focus=camera_focus,
+    viewup=camera_up,
+    roll=0,
 )
 
 # --------------------------------------------- the neutronics geometry, sliced
@@ -79,8 +89,9 @@ plt.savefig("materials-xz.png", dpi=150, bbox_inches="tight")
 # ------------------------------------------------------------ the tally mesh
 heating = pv.read("heating.vtkhdf")
 
-# cut half of it away rather than taking a flat slice, so the tetrahedra read as 3D
-heating_half = heating.clip(normal="y")
+# cut half of it away rather than taking a flat slice, so the tetrahedra read as 3D.
+# invert keeps the far half, so the cut face points back at the camera
+heating_half = heating.clip(normal="y", invert=False)
 
 plotter = pv.Plotter(off_screen=True, window_size=size)
 plotter.background_color = "white"
@@ -91,7 +102,7 @@ plotter.add_mesh(
     edge_color="#2a323c",
     line_width=0.3,
 )
-plotter.view_isometric()
+plotter.camera_position = [camera_position, camera_focus, camera_up]
 plotter.screenshot("mesh.png")
 plotter.close()
 
