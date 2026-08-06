@@ -14,9 +14,9 @@ from cadquery.vis import show
 
 size = (1200, 1000)
 
-# one camera for the CAD and the mesh, so the two images face the same way. cadquery
-# applies its own roll on top of an explicit camera unless it is set to zero.
-camera_position = (35, -90, 50)
+# the CAD image uses cadquery's own default view, which is a nice angle. These put the
+# mesh image on roughly the same angle, looking from the same side and a little above.
+camera_position = (67.5, -60.0, 45.0)
 camera_focus = (7.5, 0.0, 0.0)
 camera_up = (0.0, 0.0, 1.0)
 
@@ -34,10 +34,6 @@ show(
     trihedron=False,
     gradient=False,
     bgcolor=(1.0, 1.0, 1.0),
-    position=camera_position,
-    focus=camera_focus,
-    viewup=camera_up,
-    roll=0,
 )
 
 # --------------------------------------------- the neutronics geometry, sliced
