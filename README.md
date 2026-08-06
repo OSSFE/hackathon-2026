@@ -15,9 +15,9 @@ marked, made with `openmc.Model.plot`
 
 ![materials xy](materials-xy.png)
 
-The three images below are slices through the middle of the model, made with ParaView.
+The three images below are slices through the middle of the model, made with PyVista.
 
-The tally mesh, finely meshed around the sphere and coarsely in the rest of the box
+The tetrahedral mesh that the tally is scored on, which fills the sphere
 
 ![mesh](mesh.png)
 

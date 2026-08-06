@@ -23,7 +23,7 @@ pip install --upgrade pip
 pip install --extra-index-url https://shimwell.github.io/wheels openmc
 
 # the cad and neutronics side, these all have wheels
-pip install cadquery "cad_to_dagmc>=0.14.0" dagmc_h5m_file_inspector numpy h5py
+pip install cadquery "cad_to_dagmc>=0.14.0" dagmc_h5m_file_inspector numpy h5py pyvista
 
 # petsc is built from source into the venv, this is the slow part. The version has to
 # match petsc4py, and dolfinx 0.11 wants 3.25 or newer, which is why apt petsc is not used.
