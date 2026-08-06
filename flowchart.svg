@@ -59,7 +59,7 @@
 
   <rect x="56" y="586" width="440" height="64" rx="6" fill="#eef7f0" stroke="#4a9b6a" stroke-width="1.5"/>
   <text x="74" y="610" font-size="14" font-weight="600" fill="#1a1a1a">DOLFINx and h5py</text>
-  <text x="74" y="630" font-size="12" fill="#444444">Read the mesh natively, read the cell data with h5py</text>
+  <text x="74" y="630" font-size="12" fill="#444444">Read the mesh and the cell data from <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">tally.vtkhdf</tspan></text>
 
   <rect x="56" y="674" width="440" height="64" rx="6" fill="#eef7f0" stroke="#4a9b6a" stroke-width="1.5"/>
   <text x="74" y="698" font-size="14" font-weight="600" fill="#1a1a1a">DOLFINx</text>
