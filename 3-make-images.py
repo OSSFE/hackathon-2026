@@ -77,26 +77,28 @@ model.plot(
 plt.savefig("materials-xz.png", dpi=150, bbox_inches="tight")
 
 # ------------------------------------------------------------ the tally mesh
-# slice through the middle so the tetrahedra inside the sphere are visible
 heating = pv.read("heating.vtkhdf")
-heating_slice = heating.slice(normal="y")
+
+# cut half of it away rather than taking a flat slice, so the tetrahedra read as 3D
+heating_half = heating.clip(normal="y")
 
 plotter = pv.Plotter(off_screen=True, window_size=size)
 plotter.background_color = "white"
-# lighting off, a flat slice lit from the camera washes out to white and shows nothing
 plotter.add_mesh(
-    heating_slice,
+    heating_half,
     color="lightsteelblue",
     show_edges=True,
     edge_color="#2a323c",
-    line_width=0.4,
-    lighting=False,
+    line_width=0.3,
 )
-plotter.view_xz()
+plotter.view_isometric()
 plotter.screenshot("mesh.png")
 plotter.close()
 
 # ----------------------------------------------------------------- the tally
+# a flat slice here, a cut through the values reads better than a shaded solid
+heating_slice = heating.slice(normal="y")
+
 # the flux covers several orders of magnitude, so colour it on a log scale. Cells that
 # scored nothing are zero, and a log scale cannot show those, so lift them to the bottom
 # of the range first or nothing is drawn at all.
