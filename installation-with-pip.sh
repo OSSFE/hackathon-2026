@@ -12,7 +12,8 @@ sudo apt install -y \
   python3-dev python3-venv \
   libopenmpi-dev libhdf5-openmpi-dev libopenblas-dev \
   libboost-dev libpugixml-dev libspdlog-dev libptscotch-dev \
-  libgl1 libglu1-mesa libxrender1 libxext6
+  libgl1 libglu1-mesa libxrender1 libxext6 \
+  libxft2 libxinerama1 libxcursor1 libxfixes3 libfontconfig1
 
 python3 -m venv venv
 source venv/bin/activate
@@ -68,4 +69,4 @@ cmake --build dolfinx/build
 cmake --install dolfinx/build
 pip install --no-build-isolation ./dolfinx/python
 
-python -c "import openmc, cadquery, dolfinx; print('dolfinx', dolfinx.__version__)"
+python -c "import openmc, cadquery, cad_to_dagmc, dolfinx; print('dolfinx', dolfinx.__version__)"

@@ -90,4 +90,4 @@ assembly.add(sphere, name="sphere")
 # umesh_from_sp = tally_result.find_filter(openmc.MeshFilter).mesh
 
 
-# umesh_from_sp.write_data_to_vtk(filename="tally.vtkhdf", datasets={"mean": flux_mean})
+# umesh_from_sp.write_data_to_vtk(filename="heating.vtkhdf", datasets={"mean": flux_mean})

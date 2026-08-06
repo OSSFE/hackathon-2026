@@ -8,8 +8,8 @@ from paraview.simple import *
 size = [1400, 1000]
 
 # --------------------------------------------------------------------- the mesh
-tally = OpenDataFile("tally.vtkhdf")
-UpdatePipeline(proxy=tally)
+heating = OpenDataFile("heating.vtkhdf")
+UpdatePipeline(proxy=heating)
 
 view = CreateRenderView()
 view.ViewSize = size
@@ -18,7 +18,7 @@ view.Background = [1.0, 1.0, 1.0]
 view.OrientationAxesVisibility = 0
 
 # slice through the middle, the outside of the box is only a few large triangles
-mesh_slice = Slice(Input=tally)
+mesh_slice = Slice(Input=heating)
 mesh_slice.SliceType = "Plane"
 mesh_slice.SliceType.Origin = [0.0, 0.0, 0.0]
 mesh_slice.SliceType.Normal = [0.0, 1.0, 0.0]
@@ -41,7 +41,7 @@ view.UseColorPaletteForBackground = 0
 view.Background = [1.0, 1.0, 1.0]
 view.OrientationAxesVisibility = 0
 
-tally_slice = Slice(Input=tally)
+tally_slice = Slice(Input=heating)
 tally_slice.SliceType = "Plane"
 tally_slice.SliceType.Origin = [0.0, 0.0, 0.0]
 tally_slice.SliceType.Normal = [0.0, 1.0, 0.0]
