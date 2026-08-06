@@ -13,7 +13,7 @@ The CAD, a box with a sphere cut out of it, made with CadQuery
 The same geometry as OpenMC sees it, with the materials labelled and the source position
 marked, made with `openmc.Model.plot`
 
-![materials xy](materials-xy.png)
+![materials xz](materials-xz.png)
 
 The three images below are slices through the middle of the model, made with PyVista.
 

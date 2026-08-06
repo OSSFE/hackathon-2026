@@ -62,19 +62,19 @@ model = openmc.Model(
     settings=settings,
 )
 
-# plane_tolerance has to reach the source above the middle or the samples are not drawn
+# the xz plane cuts through y=0, which is where the source is, so the sampled source
+# positions are really in this slice rather than projected onto it from elsewhere
 model.plot(
-    basis="xy",
+    basis="xz",
     color_by="material",
     colors={mat_box: "lightsteelblue", mat_sphere: "darkorange"},
     legend=True,
     pixels=(900, 900),
     outline=True,
     n_samples=50,
-    plane_tolerance=10.0,
     source_kwargs={"marker": "x", "color": "red", "s": 20},
 )
-plt.savefig("materials-xy.png", dpi=150, bbox_inches="tight")
+plt.savefig("materials-xz.png", dpi=150, bbox_inches="tight")
 
 # ------------------------------------------------------------ the tally mesh
 # slice through the middle so the tetrahedra inside the sphere are visible
