@@ -17,7 +17,7 @@ marked, made with `openmc.Model.plot`
 
 The three images below are slices through the middle of the model, made with PyVista.
 
-The tetrahedral mesh that the tally is scored on, which fills the sphere
+The tetrahedral mesh that the tally is scored on, which fills both the box and the sphere
 
 ![mesh](mesh.png)
 

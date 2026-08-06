@@ -20,7 +20,7 @@ my_model.add_cadquery_object(cadquery_object=assembly, material_tags="assembly_n
 my_model.export_dagmc_h5m_file(
     filename="dagmc.h5m",
     meshing_backend="cad-to-dagmc-mesher",
-    tet_volumes=["sphere"],
+    tet_volumes=["sphere", "box"],
     target_edge_length=2.0,
     umesh_filename="umesh.vtk",
 )
