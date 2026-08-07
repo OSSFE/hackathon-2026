@@ -13,14 +13,10 @@ conda activate demo
 conda install -c conda-forge \
   "fenics-dolfinx>=0.11" \
   "cadquery>=2.8.0" \
-  "cad_to_dagmc>=0.13.2" \
+  "cad_to_dagmc>=0.14.1" \
   "openmc=*=dagmc_nompi*" \
-  pyvista dagmc_h5m_file_inspector -y
+  pyvista dagmc_h5m_file_inspector cadquery-direct-mesh-plugin -y
 
-# conda-forge only has cad_to_dagmc 0.13.2 and does not carry cad-to-dagmc-mesher at all,
-# so the newer version and the mesher come from pip. --no-deps stops pip replacing the
-# conda builds of cadquery and the rest that they depend on.
-pip install --no-deps \
-  "cad_to_dagmc>=0.14.0" \
-  "cad-to-dagmc-mesher>=0.2.0" \
-  "cadquery_direct_mesh_plugin>=0.2.0"
+# cad-to-dagmc-mesher is not on conda-forge, so it comes from pip. --no-deps stops pip
+# replacing the conda builds of cadquery and the rest that it depends on.
+pip install --no-deps "cad-to-dagmc-mesher>=0.2.0"

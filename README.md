@@ -40,8 +40,7 @@ eight orders of magnitude.
 ![tally](tally.png)
 
 The steady state temperature from FEniCS with the tally as the heat source, sliced through
-the middle. The box and the sphere are separate meshes that do not share nodes, so the
-zero temperature boundary lands on the join and no heat crosses between them, which is the
-circular edge you can see, see #10.
+the middle. The box and the sphere share nodes on the face where they meet, so heat
+crosses from one material into the other.
 
 ![temperature](temperature.png)
