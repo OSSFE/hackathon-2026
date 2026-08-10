@@ -33,30 +33,30 @@ pip install cadquery "cad_to_dagmc>=0.14.1" dagmc_h5m_file_inspector numpy h5py 
 pip install mpi4py
 git clone --branch release --depth 1 https://gitlab.com/petsc/petsc.git
 pip install ./petsc
+
+# petsc lands in site-packages, and both petsc4py and dolfinx find it from here. dolfinx
+# prepends $PETSC_DIR/lib/pkgconfig to the pkg-config search path itself, which is exactly
+# where the wheel now keeps PETSc.pc, so no PKG_CONFIG_PATH juggling is needed
+export PETSC_DIR="$(python -c 'import petsc; print(petsc.get_petsc_dir())')"
+
 # petsc4py has to be built without isolation, otherwise it records the temporary pip
 # build directory as PETSC_DIR and dolfinx cannot find libpetsc.so at run time
 pip install setuptools wheel cython
 pip install --no-build-isolation ./petsc/src/binding/petsc4py
 
-# petsc ships PETSc.pc inside its own install now, it just has to be on the search path
-petsc_dir="$(python -c 'import petsc; print(petsc.get_petsc_dir())')"
-export PKG_CONFIG_PATH="$petsc_dir/lib/pkgconfig:$PKG_CONFIG_PATH"
-
 # the petsc wheel ships libpetsc.so as a linker script rather than a library, which the
 # loader dolfinx uses cannot read, so make it a symlink to the real thing instead
-ln -sf "$(cd "$petsc_dir/lib" && ls libpetsc.so.* | head -1)" "$petsc_dir/lib/libpetsc.so"
+ln -sf "$(cd "$PETSC_DIR/lib" && ls libpetsc.so.* | head -1)" "$PETSC_DIR/lib/libpetsc.so"
 
 # the pure python parts of fenics, plus the tools needed to build dolfinx
 pip install fenics-ufl fenics-ffcx scikit-build-core nanobind cffi
 
 export CMAKE_PREFIX_PATH="$VIRTUAL_ENV:$CMAKE_PREFIX_PATH"
 
-# basix, the c++ library then the python bindings
-git clone --branch v0.11.0 --depth 1 https://github.com/FEniCS/basix.git
-cmake -G Ninja -B basix/build -S basix/cpp -DCMAKE_INSTALL_PREFIX="$VIRTUAL_ENV"
-cmake --build basix/build
-cmake --install basix/build
-pip install --no-build-isolation ./basix/python
+# the basix wheel carries libbasix.so, the headers and BasixConfig.cmake inside the python
+# package, and dolfinx asks the interpreter where basix lives (DOLFINX_BASIX_PYTHON, on by
+# default), so there is no c++ library to build here. The version has to track dolfinx.
+pip install "fenics-basix==0.11.0"
 
 # dolfinx 0.11 is needed for the native VTKHDF reader (dolfinx.io.vtkhdf)
 git clone --branch v0.11.0 --depth 1 https://github.com/FEniCS/dolfinx.git
