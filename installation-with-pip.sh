@@ -25,30 +25,26 @@ pip install --extra-index-url https://shimwell.github.io/wheels openmc
 # the cad and neutronics side, these all have wheels
 pip install cadquery "cad_to_dagmc>=0.14.1" dagmc_h5m_file_inspector numpy h5py pyvista
 
-# petsc is built from source into the venv, this is the slow part. The version has to
-# match petsc4py, and dolfinx 0.11 wants 3.25 or newer, which is why apt petsc is not used.
-pip install mpi4py petsc
+# petsc is built from source into the venv, this is the slow part. dolfinx 0.11 wants
+# 3.25 or newer, which is why apt petsc is not used. It comes from the release branch
+# rather than the PyPI wheel because petsc merge request 9488 keeps the pkg-config files
+# in the wheel, and that is how dolfinx finds petsc. Building petsc4py from the same
+# clone is also what keeps the two versions in step.
+pip install mpi4py
+git clone --branch release --depth 1 https://gitlab.com/petsc/petsc.git
+pip install ./petsc
 # petsc4py has to be built without isolation, otherwise it records the temporary pip
 # build directory as PETSC_DIR and dolfinx cannot find libpetsc.so at run time
 pip install setuptools wheel cython
-pip install --no-build-isolation petsc4py
+pip install --no-build-isolation ./petsc/src/binding/petsc4py
 
-# dolfinx looks for petsc with pkg-config but the petsc wheel ships no .pc file
-mkdir -p "$VIRTUAL_ENV/lib/pkgconfig"
-cat > "$VIRTUAL_ENV/lib/pkgconfig/PETSc.pc" <<EOF
-prefix=$(python -c "import petsc; print(petsc.get_petsc_dir())")
-Name: PETSc
-Description: Portable Extensible Toolkit for Scientific Computation
-Version: $(python -c "import petsc4py; print(petsc4py.__version__)")
-Cflags: -I\${prefix}/include
-Libs: -L\${prefix}/lib -lpetsc
-EOF
-export PKG_CONFIG_PATH="$VIRTUAL_ENV/lib/pkgconfig:$PKG_CONFIG_PATH"
+# petsc ships PETSc.pc inside its own install now, it just has to be on the search path
+petsc_dir="$(python -c 'import petsc; print(petsc.get_petsc_dir())')"
+export PKG_CONFIG_PATH="$petsc_dir/lib/pkgconfig:$PKG_CONFIG_PATH"
 
 # the petsc wheel ships libpetsc.so as a linker script rather than a library, which the
 # loader dolfinx uses cannot read, so make it a symlink to the real thing instead
-petsc_lib="$(python -c 'import petsc; print(petsc.get_petsc_dir())')/lib"
-ln -sf "$(cd "$petsc_lib" && ls libpetsc.so.* | head -1)" "$petsc_lib/libpetsc.so"
+ln -sf "$(cd "$petsc_dir/lib" && ls libpetsc.so.* | head -1)" "$petsc_dir/lib/libpetsc.so"
 
 # the pure python parts of fenics, plus the tools needed to build dolfinx
 pip install fenics-ufl fenics-ffcx scikit-build-core nanobind cffi
