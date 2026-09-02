@@ -25,27 +25,28 @@ pip install --extra-index-url https://shimwell.github.io/wheels openmc
 # the cad and neutronics side, these all have wheels
 pip install cadquery "cad_to_dagmc>=0.14.1" dagmc_h5m_file_inspector numpy h5py pyvista
 
-# petsc is built from source into the venv, this is the slow part. dolfinx 0.11 wants
-# 3.25 or newer, which is why apt petsc is not used. It comes from the release branch
-# rather than the PyPI wheel because petsc merge request 9488 keeps the pkg-config files
-# in the wheel, and that is how dolfinx finds petsc. Building petsc4py from the same
-# clone is also what keeps the two versions in step.
+# petsc is compiled while pip installs the sdist, and this is the slow part. dolfinx 0.11
+# wants 3.25 or newer, which is why apt petsc is not used. 3.25.5 is the first release on
+# PyPI to keep the pkg-config files in the wheel (petsc merge request 9488), and that is
+# how dolfinx finds petsc, so the git clone of the release branch is no longer needed.
+# petsc4py is pinned to the same version to keep the two in step.
 pip install mpi4py
-git clone --branch release --depth 1 https://gitlab.com/petsc/petsc.git
-pip install ./petsc
+pip install "petsc==3.25.5"
 
 # petsc lands in site-packages, and both petsc4py and dolfinx find it from here. dolfinx
 # prepends $PETSC_DIR/lib/pkgconfig to the pkg-config search path itself, which is exactly
 # where the wheel now keeps PETSc.pc, so no PKG_CONFIG_PATH juggling is needed
 export PETSC_DIR="$(python -c 'import petsc; print(petsc.get_petsc_dir())')"
 
-# petsc4py has to be built without isolation, otherwise it records the temporary pip
-# build directory as PETSC_DIR and dolfinx cannot find libpetsc.so at run time
-pip install setuptools wheel cython
-pip install --no-build-isolation ./petsc/src/binding/petsc4py
+# petsc4py takes PETSC_DIR from the environment (setup.cfg has petsc_dir = $PETSC_DIR) and
+# records it, so the export above has to happen first, otherwise dolfinx cannot find
+# libpetsc.so at run time
+pip install "petsc4py==3.25.5"
 
 # the petsc wheel ships libpetsc.so as a linker script rather than a library, which the
-# loader dolfinx uses cannot read, so make it a symlink to the real thing instead
+# loader dolfinx uses cannot read, so make it a symlink to the real thing instead. dolfinx
+# pull request 4468 fixes this on the dolfinx side, but it is only on main, so this stays
+# for as long as we build 0.11
 ln -sf "$(cd "$PETSC_DIR/lib" && ls libpetsc.so.* | head -1)" "$PETSC_DIR/lib/libpetsc.so"
 
 # the pure python parts of fenics, plus the tools needed to build dolfinx
