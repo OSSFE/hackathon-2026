@@ -1,0 +1,48 @@
+name: Install with pip
+
+# installation-with-pip.sh builds petsc and dolfinx from source, so this takes
+# the best part of an hour. It only runs when the install itself could have
+# changed, plus weekly, because the script tracks upstream releases and most
+# breakage comes from those rather than from this repo.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - installation-with-pip.sh
+      - 2-solve-heat-equation.py
+      - .github/workflows/install-with-pip.yml
+  pull_request:
+    paths:
+      - installation-with-pip.sh
+      - 2-solve-heat-equation.py
+      - .github/workflows/install-with-pip.yml
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  install-with-pip:
+    name: Ubuntu, pip
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install everything with the pip script
+        run: bash installation-with-pip.sh
+
+      # the script ends on an import check, this goes further and solves the heat
+      # equation on the heating field committed to the repo. It needs no nuclear
+      # data, and it covers the parts of the install that imports alone do not:
+      # dolfinx.fem.petsc has to dlopen libpetsc.so, the solve goes through
+      # petsc4py, and the mesh is read with the 0.11 vtkhdf reader.
+      - name: Solve the heat equation with the committed heating field
+        run: |
+          source venv/bin/activate
+          python 2-solve-heat-equation.py
+          test -s temperature.vtkhdf
