@@ -19,4 +19,5 @@ conda install -c conda-forge \
 
 # cad-to-dagmc-mesher is not on conda-forge, so it comes from pip. --no-deps stops pip
 # replacing the conda builds of cadquery and the rest that it depends on.
-pip install --no-deps cad-to-dagmc-mesher
+# TODO: drop the upper bound once fusion-energy/cad-to-dagmc-mesher#157 is fixed
+pip install --no-deps "cad-to-dagmc-mesher<0.3.0"

@@ -23,9 +23,11 @@ pip install --upgrade pip
 pip install --extra-index-url https://shimwell.github.io/wheels openmc
 
 # the cad and neutronics side, these all have wheels. openmc-data-downloader is here so
-# that getting the nuclear data for the first script is one command, see the README
+# that getting the nuclear data for the first script is one command, see the README.
+# TODO: drop the cad-to-dagmc-mesher bound once fusion-energy/cad-to-dagmc-mesher#157 is
+# fixed. 0.3.0 panics on this geometry with "orient_3d_sos: all projections degenerate"
 pip install cadquery cad_to_dagmc dagmc_h5m_file_inspector numpy h5py pyvista \
-  openmc-data-downloader cad-to-dagmc-mesher
+  openmc-data-downloader "cad-to-dagmc-mesher<0.3.0"
 
 # petsc is compiled while pip installs the sdist, and this is the slow part. dolfinx 0.11
 # wants 3.25 or newer, which is why apt petsc is not used. 3.25.5 is the first release on
@@ -51,20 +53,25 @@ pip install "petsc4py==3.25.5"
 # for as long as we build 0.11
 ln -sf "$(cd "$PETSC_DIR/lib" && ls libpetsc.so.* | head -1)" "$PETSC_DIR/lib/libpetsc.so"
 
-# the pure python parts of fenics, plus the tools needed to build dolfinx. nanobind is
-# pinned because it only shares its type registry between extensions built with the same
-# internal ABI version, and the fenics-basix wheel below is prebuilt. 2.12.0 was the
-# newest nanobind when that wheel was published. Building dolfinx against 3.x instead
-# leaves basix elements unrecognisable to dolfinx, which surfaces at run time as
-# "incompatible function arguments" from fem.functionspace rather than at build time
+# the pure python parts of fenics, plus the tools needed to build dolfinx. basix and
+# dolfinx are both built from source below so they agree with each other whatever nanobind
+# is installed, but it is pinned anyway because the 0.11 releases predate nanobind 3 and
+# were never built against it
 pip install fenics-ufl fenics-ffcx scikit-build-core "nanobind==2.12.0" cffi
 
 export CMAKE_PREFIX_PATH="$VIRTUAL_ENV:$CMAKE_PREFIX_PATH"
 
-# the basix wheel carries libbasix.so, the headers and BasixConfig.cmake inside the python
-# package, and dolfinx asks the interpreter where basix lives (DOLFINX_BASIX_PYTHON, on by
-# default), so there is no c++ library to build here. The version has to track dolfinx.
-pip install "fenics-basix==0.11.0"
+# basix, the c++ library then the python bindings. The fenics-basix wheel cannot be used
+# here even though it carries libbasix.so and BasixConfig.cmake: it is a Py_LIMITED_API
+# build, and nanobind puts that in its ABI tag (NB_STABLE_ABI in nb_abi.h), so its types
+# are invisible to the dolfinx bindings built below. That shows up at run time as
+# "incompatible function arguments" from fem.functionspace. Building both from source
+# keeps them on one ABI tag. The version has to track dolfinx.
+git clone --branch v0.11.0 --depth 1 https://github.com/FEniCS/basix.git
+cmake -G Ninja -B basix/build -S basix/cpp -DCMAKE_INSTALL_PREFIX="$VIRTUAL_ENV"
+cmake --build basix/build
+cmake --install basix/build
+pip install --no-build-isolation ./basix/python
 
 # dolfinx 0.11 is needed for the native VTKHDF reader (dolfinx.io.vtkhdf)
 git clone --branch v0.11.0 --depth 1 https://github.com/FEniCS/dolfinx.git
