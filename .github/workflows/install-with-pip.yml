@@ -61,8 +61,12 @@ jobs:
 
       # covers the parts of the install that an import check does not:
       # dolfinx.fem.petsc has to dlopen libpetsc.so, the solve goes through
-      # petsc4py, and the mesh is read with the 0.11 vtkhdf reader
+      # petsc4py, and the mesh is read with the 0.11 vtkhdf reader.
+      # it runs even when the tally step failed, so a broken mesher does not
+      # hide whether the dolfinx side works. When the tally step stopped before
+      # writing heating.vtkhdf, this solves the copy committed to the repo
       - name: Solve the heat equation
+        if: ${{ !cancelled() }}
         run: |
           source venv/bin/activate
           python 2-solve-heat-equation.py

@@ -51,8 +51,13 @@ pip install "petsc4py==3.25.5"
 # for as long as we build 0.11
 ln -sf "$(cd "$PETSC_DIR/lib" && ls libpetsc.so.* | head -1)" "$PETSC_DIR/lib/libpetsc.so"
 
-# the pure python parts of fenics, plus the tools needed to build dolfinx
-pip install fenics-ufl fenics-ffcx scikit-build-core nanobind cffi
+# the pure python parts of fenics, plus the tools needed to build dolfinx. nanobind is
+# pinned because it only shares its type registry between extensions built with the same
+# internal ABI version, and the fenics-basix wheel below is prebuilt. 2.12.0 was the
+# newest nanobind when that wheel was published. Building dolfinx against 3.x instead
+# leaves basix elements unrecognisable to dolfinx, which surfaces at run time as
+# "incompatible function arguments" from fem.functionspace rather than at build time
+pip install fenics-ufl fenics-ffcx scikit-build-core "nanobind==2.12.0" cffi
 
 export CMAKE_PREFIX_PATH="$VIRTUAL_ENV:$CMAKE_PREFIX_PATH"
 
