@@ -3,8 +3,11 @@ import dagmc_h5m_file_inspector as di
 import openmc
 from cad_to_dagmc import CadToDagmc
 
-# OpenMC needs nuclear data, so set OPENMC_CROSS_SECTIONS to your cross_sections.xml
-# before running this, or set openmc.config["cross_sections"] here.
+# OpenMC needs nuclear data. Any library with H1 and Fe56 works, and
+#   openmc_data_downloader -l FENDL-3.1d -i H1 Fe56 -d nuclear_data
+#   export OPENMC_CROSS_SECTIONS=$PWD/nuclear_data/cross_sections.xml
+# gets just those two, see the README. openmc.config["cross_sections"] can be set here
+# instead of using the environment variable.
 
 assembly = cq.Assembly()
 box = cq.Workplane("XY").box(30, 30, 30)

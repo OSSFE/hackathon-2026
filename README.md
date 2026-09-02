@@ -1,5 +1,7 @@
 # OSSFE-Hackathon-2026
 
+[![Install with pip](https://github.com/OSSFE/hackathon-2026/actions/workflows/install-with-pip.yml/badge.svg)](https://github.com/OSSFE/hackathon-2026/actions/workflows/install-with-pip.yml)
+
 Material for the hackathon at the end of OSSFE 2026
 
 ![OpenMC to FEniCS workflow](flowchart.svg)
@@ -9,10 +11,15 @@ one environment. `installation-with-conda.sh` needs pip on top for the parts con
 does not carry, and cadquery and fenics-dolfinx cannot share a conda environment, so that
 route needs two, see #8.
 
-Run the scripts in order. The first one needs nuclear data, so set
-`OPENMC_CROSS_SECTIONS` before running it.
+Run the scripts in order. The first one needs nuclear data, and the pip install brings
+`openmc_data_downloader` with it, so fetching the two nuclides this example uses is one
+command. If you already have a library, point `OPENMC_CROSS_SECTIONS` at its
+`cross_sections.xml` and skip the download.
 
 ```bash
+openmc_data_downloader -l FENDL-3.1d -i H1 Fe56 -d nuclear_data
+export OPENMC_CROSS_SECTIONS=$PWD/nuclear_data/cross_sections.xml
+
 python 1-make-cad-get-neutron-heating.py
 python 2-solve-heat-equation.py
 python 3-make-images.py
