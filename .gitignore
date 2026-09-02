@@ -205,3 +205,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# nuclear data fetched by openmc_data_downloader
+nuclear_data/

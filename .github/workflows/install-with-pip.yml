@@ -1,0 +1,73 @@
+name: Install with pip
+
+# installation-with-pip.sh builds petsc and dolfinx from source, so this takes
+# the best part of an hour. It only runs when the install or the scripts it
+# checks could have changed, plus weekly, because the script tracks upstream
+# releases and most breakage comes from those rather than from this repo.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - installation-with-pip.sh
+      - 1-make-cad-get-neutron-heating.py
+      - 2-solve-heat-equation.py
+      - .github/workflows/install-with-pip.yml
+  pull_request:
+    paths:
+      - installation-with-pip.sh
+      - 1-make-cad-get-neutron-heating.py
+      - 2-solve-heat-equation.py
+      - .github/workflows/install-with-pip.yml
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  install-with-pip:
+    name: Ubuntu 26.04, pip
+    # not ubuntu-latest, which is still 24.04. dolfinx wants SCOTCH in CONFIG
+    # mode and 24.04 carries scotch 7.0.4, which ships no SCOTCHConfig.cmake, so
+    # the dolfinx configure fails with "No graph partitioner found". 26.04 has
+    # 7.0.11, which does ship it.
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install everything with the pip script
+        run: bash installation-with-pip.sh
+
+      # the example only uses H1 and Fe56, so this is a few MB rather than the
+      # whole library. FENDL is the fusion library and has both.
+      - name: Download the nuclear data the example needs
+        run: |
+          source venv/bin/activate
+          openmc_data_downloader -l FENDL-3.1d -i H1 Fe56 -d nuclear_data
+
+      # this overwrites the heating.vtkhdf committed to the repo, which is the
+      # point, the solve below then runs on a tally made by this install rather
+      # than on a stored one
+      - name: Make the CAD and tally the neutron heating
+        run: |
+          source venv/bin/activate
+          export OPENMC_CROSS_SECTIONS=$PWD/nuclear_data/cross_sections.xml
+          python 1-make-cad-get-neutron-heating.py
+          test -s heating.vtkhdf
+
+      # covers the parts of the install that an import check does not:
+      # dolfinx.fem.petsc has to dlopen libpetsc.so, the solve goes through
+      # petsc4py, and the mesh is read with the 0.11 vtkhdf reader.
+      # it runs even when the tally step failed, so a broken mesher does not
+      # hide whether the dolfinx side works. When the tally step stopped before
+      # writing heating.vtkhdf, this solves the copy committed to the repo
+      - name: Solve the heat equation
+        if: ${{ !cancelled() }}
+        run: |
+          source venv/bin/activate
+          python 2-solve-heat-equation.py
+          test -s temperature.vtkhdf
