@@ -51,7 +51,7 @@ energy_filter = openmc.EnergyFilter([10.0e6, 20.0e6])
 
 tally = openmc.Tally(name="unstructured_mesh_tally")
 tally.filters = [mesh_filter, energy_filter]
-tally.scores = ["flux"]
+tally.scores = ["heating"]
 my_tallies = openmc.Tallies([tally])
 
 my_settings = openmc.Settings()
@@ -72,7 +72,7 @@ sp_filename = model.run()
 
 sp = openmc.StatePoint(sp_filename)
 tally_result = sp.get_tally(name="unstructured_mesh_tally")
-flux_mean = tally_result.get_values(scores=["flux"], value="mean").flatten()
+heating_mean = tally_result.get_values(scores=["heating"], value="mean").flatten()
 
 umesh_from_sp = tally_result.find_filter(openmc.MeshFilter).mesh
-umesh_from_sp.write_data_to_vtk(filename="heating.vtkhdf", datasets={"mean": flux_mean})
+umesh_from_sp.write_data_to_vtk(filename="heating.vtkhdf", datasets={"mean": heating_mean})
