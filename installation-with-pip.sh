@@ -24,8 +24,7 @@ pip install --extra-index-url https://shimwell.github.io/wheels openmc
 
 # the cad and neutronics side, these all have wheels. openmc-data-downloader is here so
 # that getting the nuclear data for the first script is one command, see the README.
-pip install cadquery cad_to_dagmc dagmc_h5m_file_inspector numpy h5py pyvista \
-  openmc-data-downloader "cad-to-dagmc-mesher>0.3.1"
+pip install cadquery cad_to_dagmc dagmc_h5m_file_inspector numpy h5py pyvista openmc-data-downloader
 
 # petsc is compiled while pip installs the sdist, and this is the slow part. dolfinx 0.11
 # wants 3.25 or newer, which is why apt petsc is not used. 3.25.5 is the first release on
