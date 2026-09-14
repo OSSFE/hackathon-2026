@@ -1,9 +1,10 @@
 name: Install with pip
 
-# installation-with-pip.sh builds petsc and dolfinx from source, so this takes
-# the best part of an hour. It only runs when the install or the scripts it
-# checks could have changed, plus weekly, because the script tracks upstream
-# releases and most breakage comes from those rather than from this repo.
+# installation-with-pip.sh installs everything from wheels, so this is a few
+# minutes rather than the best part of an hour. It only runs when the install or
+# the scripts it checks could have changed, plus weekly, because the script
+# tracks upstream releases and most breakage comes from those rather than from
+# this repo.
 on:
   push:
     branches:
@@ -29,13 +30,12 @@ concurrency:
 
 jobs:
   install-with-pip:
-    name: Ubuntu 26.04, pip
-    # not ubuntu-latest, which is still 24.04. dolfinx wants SCOTCH in CONFIG
-    # mode and 24.04 carries scotch 7.0.4, which ships no SCOTCHConfig.cmake, so
-    # the dolfinx configure fails with "No graph partitioner found". 26.04 has
-    # 7.0.11, which does ship it.
-    runs-on: ubuntu-26.04
-    timeout-minutes: 180
+    name: Ubuntu latest, pip
+    # 26.04 was needed while dolfinx was built from source, for a scotch new
+    # enough to ship SCOTCHConfig.cmake. Nothing is built now, and the wheels are
+    # manylinux_2_34, so anything with glibc 2.34 or newer will do.
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
 
@@ -61,7 +61,7 @@ jobs:
 
       # covers the parts of the install that an import check does not:
       # dolfinx.fem.petsc has to dlopen libpetsc.so, the solve goes through
-      # petsc4py, and the mesh is read with the 0.11 vtkhdf reader.
+      # petsc4py, and the mesh is read with the vtkhdf reader.
       # it runs even when the tally step failed, so a broken mesher does not
       # hide whether the dolfinx side works. When the tally step stopped before
       # writing heating.vtkhdf, this solves the copy committed to the repo
