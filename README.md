@@ -11,7 +11,7 @@ one environment. `installation-with-conda.sh` needs pip on top for the parts con
 does not carry, and cadquery and fenics-dolfinx cannot share a conda environment, so that
 route needs two, see #8.
 
-The pip route requires Ubuntu 26.04.
+The pip route installs everything from wheels and needs glibc 2.34 or newer, so Ubuntu 22.04 onwards.
 
 Run the scripts in order. The first one needs nuclear data, and the pip install brings
 `openmc_data_downloader` with it, so fetching the two nuclides this example uses is one
