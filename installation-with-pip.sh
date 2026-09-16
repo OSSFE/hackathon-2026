@@ -33,4 +33,7 @@ pip install mpich
 pip install --pre --extra-index-url https://shimwell.github.io/wheels \
   "fenics-dolfinx[petsc4py]" petsc
 
+# FESTIM and its compiled scifem dependency use the FEniCSx stack above.
+pip install --extra-index-url https://shimwell.github.io/wheels festim
+
 python -c "import openmc, cadquery, cad_to_dagmc, dolfinx; print('dolfinx', dolfinx.__version__)"

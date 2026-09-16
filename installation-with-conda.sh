@@ -12,6 +12,7 @@ conda activate demo
 # into the same conda environment, so for now the two scripts need separate environments.
 conda install -c conda-forge \
   "fenics-dolfinx>=0.11" \
+  festim \
   "cadquery>=2.8.0" \
   cad_to_dagmc \
   "openmc=*=dagmc_nompi*" \
