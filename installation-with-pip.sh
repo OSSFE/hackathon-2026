@@ -26,14 +26,14 @@ pip install cadquery cad_to_dagmc dagmc_h5m_file_inspector numpy h5py pyvista op
 # the MPI in use. openmc is a serial build and links no MPI, so nothing clashes.
 pip install mpich
 
-# dolfinx, basix, ffcx, ufl, petsc and petsc4py, all as wheels. --pre is required because
+# dolfinx, basix, ffcx, ufl, petsc, petsc4py and scifem, all as wheels. --pre is required because
 # these are development versions, and without it pip ignores them and falls back to
 # building petsc from the source distribution on PyPI, which is the slow path this
 # replaces. petsc4py comes in through the fenics-dolfinx extra.
 pip install --pre --extra-index-url https://shimwell.github.io/wheels \
-  "fenics-dolfinx[petsc4py]" petsc
+  "fenics-dolfinx[petsc4py]" petsc scifem
 
-# FESTIM and its compiled scifem dependency use the FEniCSx stack above.
-pip install --extra-index-url https://shimwell.github.io/wheels festim
+# FESTIM and its remaining dependencies are available from PyPI.
+pip install festim
 
 python -c "import openmc, cadquery, cad_to_dagmc, dolfinx; print('dolfinx', dolfinx.__version__)"
