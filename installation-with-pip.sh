@@ -26,11 +26,11 @@ pip install cadquery cad_to_dagmc dagmc_h5m_file_inspector numpy h5py pyvista op
 # the MPI in use. openmc is a serial build and links no MPI, so nothing clashes.
 pip install mpich
 
-# dolfinx, basix, ffcx, ufl, petsc and petsc4py, all as wheels. --pre is required
-# because these are development versions. petsc4py comes in through the
-# fenics-dolfinx extra.
-pip install --pre --extra-index-url https://shimwell.github.io/wheels \
-  "fenics-dolfinx[petsc4py]" petsc
+# dolfinx, basix, ffcx, ufl, petsc and petsc4py, all as wheels. petsc4py comes in
+# through the fenics-dolfinx extra and brings petsc with it. PyPI only has source
+# distributions of petsc and petsc4py, so --only-binary stops pip compiling them.
+pip install --only-binary petsc,petsc4py --extra-index-url https://shimwell.github.io/wheels \
+  "fenics-dolfinx[petsc4py]"
 
 # Install the newest scifem wheel from the custom index without allowing a newer
 # source distribution on PyPI to take precedence. Its dependencies are installed
