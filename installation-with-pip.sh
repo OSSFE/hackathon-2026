@@ -28,9 +28,8 @@ pip install mpich
 
 # dolfinx, basix, ffcx, ufl, petsc and petsc4py, all as wheels. petsc4py comes in
 # through the fenics-dolfinx extra and brings petsc with it. PyPI only has source
-# distributions of petsc and petsc4py, so --only-binary stops pip compiling them.
-pip install --only-binary petsc,petsc4py --extra-index-url https://shimwell.github.io/wheels \
-  "fenics-dolfinx[petsc4py]"
+# distributions of petsc and petsc4py, and pip takes the wheel at the same version.
+pip install --extra-index-url https://shimwell.github.io/wheels "fenics-dolfinx[petsc4py]"
 
 # Install the newest scifem wheel from the custom index without allowing a newer
 # source distribution on PyPI to take precedence. Its dependencies are installed
